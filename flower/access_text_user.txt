@@ -1,0 +1,15 @@
+Admin
+log: Admin
+pass: admin
+
+User salesman
+log: Test1
+pass: Za5CHwIIMJ
+
+User buyer
+log: Test2
+pass: 0j8LCd963t
+
+User salesman
+log: test3
+pass: lOfYkRXI7
