@@ -1,0 +1,28 @@
+{% extends "base_general_template.html" %}
+
+
+{% block content %}
+    <h1>List of lots</h1>
+
+    {% if list_lots %}
+            <ul class="list-group">
+
+              {% for lot in list_lots %}
+              <li class="list-group-item">
+                  <p><b>Salesman:</b><a href="{{ lot.salesman.get_salesman_url }}">{{ lot.salesman }}</a></p>
+                  <p><b>Title:</b> {{ lot.title }}</p>
+                  <p><b>Create:</b> {{ lot.created|date:"d.m.Y, H:i" }} </p>
+                  <p><b>Flower:</b> {{ lot.flower }} </p>
+                  <p><b>Amount:</b> {{ lot.amount }} </p>
+                  <p><b>Unit price:</b> {{ lot.unit_price }} </p>
+                  <p class="w-25 p-3">
+                      <a href=" {{ lot.get_absolute_url }} "
+                         class="list-group-item list-group-item-action active">More information</a>
+                  </p>
+
+              </li>
+              {% endfor %}
+
+            </ul>
+        {% endif %}
+{% endblock %}

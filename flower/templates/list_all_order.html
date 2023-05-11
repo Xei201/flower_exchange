@@ -1,0 +1,31 @@
+{% extends "base_general_template.html" %}
+
+
+{% block content %}
+<div>
+  <h1 style="text-align:center">Платежи</h1><br>
+
+  <table class="container">
+  <thead>
+    <tr>
+      <th scope="col">Salesman</th>
+      <th scope="col">Buyer</th>
+      <th scope="col">Sun price</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for payment in payments %}
+      <tr>
+        <th scope="row">{{ payment.lot__salesman__username }}</th>
+        <td >{{ payment.order__buyer__username }}</td>
+        <td>{{ payment.price_sum }}</td>
+
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+
+{% endblock %}

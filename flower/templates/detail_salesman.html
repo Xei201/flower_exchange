@@ -1,0 +1,28 @@
+{% extends "base_general_template.html" %}
+
+{% block content %}
+  <h1>{{ Salesman }}</h1>
+
+
+  <p><strong>Name:</strong> {{ salesman.username }}</p>
+  <p><strong>Date joined:</strong> {{ salesman.date_joined|date:"d.m.Y, H:i" }}</p>
+  <p><strong>Email:</strong> {{ salesman.phone }}</p>
+
+
+    <div style="margin-left:20px;margin-top:20px">
+      <h3>Comments</h3>
+
+      {% for comment in salesman.review.all %}
+      <hr>
+      <p>
+        {{ comment.user }} ({{ comment.created }}) - {{ comment.context }}
+      </p>
+      {% endfor %}
+      {% if user.is_authenticated %}
+      <h4><a href="{{ salesman.get_comment_url }}">Add comment</a></h4>
+      {% endif %}
+
+    </div>
+
+
+{% endblock %}

@@ -48,6 +48,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'flower.urls'
 
+# Crispy forms version, using bootstrap
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

@@ -3,5 +3,7 @@
 /flower/deploy/
 /flower/flower/settings.ini
 /flower/logs/
-/flower/exchange/migrations/
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
 /flower/db.sqlite3

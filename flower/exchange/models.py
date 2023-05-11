@@ -27,6 +27,7 @@ def validate_buyer(pk):
 
 
 class CustomUser(AbstractUser):
+    """Update user model"""
     SALESMAN = 1
     BUYER = 2
 
@@ -43,11 +44,17 @@ class CustomUser(AbstractUser):
 
     def get_salesman_url(self):
         if self.role == 1:
-            return reverse('salesman-detail', kwargs={'username': self.username})
+            return reverse('salesman-detail', kwargs={'pk': self.id})
+        return reverse('error-page')
+
+    def get_comment_url(self):
+        if self.role == 1:
+            return reverse('create-comment-salesman', kwargs={'pk': self.id})
         return reverse('error-page')
 
 
 class Flower(models.Model):
+    """Flower for lots"""
     WHITE = 1
     BLACK = 2
     BLUE = 3
@@ -78,6 +85,7 @@ class Flower(models.Model):
 
 
 class Lot(models.Model):
+    """Salesman lot"""
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -86,14 +94,14 @@ class Lot(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         validators=[validate_salesman],
-        related_name="salesman",
+        related_name="lot",
     )
     title = models.CharField(
         max_length=120)
     flower = models.ForeignKey(
         Flower,
         on_delete=models.CASCADE,
-        related_name='order_items'
+        related_name='lot'
     )
     slug = models.SlugField(
         max_length=200,
@@ -114,27 +122,34 @@ class Lot(models.Model):
     class META:
         ordering = ["-created"]
 
+    # Auto-generate slug
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
         super(Lot, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        # return reverse('lot-detail', kwargs={'uuid': self.id, 'slug': self.slug})
-        pass
+        return reverse('lot-detail', kwargs={'uuid': self.id, 'slug': self.slug})
+
+    def get_update_url(self):
+        return reverse('lot-update', kwargs={'uuid': self.id})
+
+    def get_comment_url(self):
+        return reverse('create-comment', kwargs={'uuid': self.id, 'slug': self.slug})
 
     def __str__(self):
         return self.title
 
 
 class Order(models.Model):
+    """Client order"""
     description = models.TextField(
         help_text="Order comment"
     )
     buyer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        validators=[validate_salesman],
-        related_name="buyer",
+        validators=[validate_buyer],
+        related_name="order"
     )
     created = models.DateTimeField(
         auto_now_add=True
@@ -146,10 +161,10 @@ class Order(models.Model):
         ordering = ["-created"]
 
     def get_total_cost(self):
-        return sum(item.get_cost() for item in self.items.all())
+        return sum(item.get_coast() for item in self.item.all())
 
     def get_absolute_url(self):
-        # return reverse('order-detail', kwargs={'pk': self.pk})
+        return reverse('order-detail', kwargs={'pk': self.pk})
         pass
 
     def __str__(self):
@@ -157,10 +172,11 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
+    """Position in client order"""
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
-        related_name='items'
+        related_name='item'
     )
     lot = models.ForeignKey(
         Lot,
@@ -174,4 +190,47 @@ class OrderItem(models.Model):
 
     def get_coast(self):
         return self.amount * self.lot.unit_price
+
+
+class SalesmanReview(models.Model):
+    """Comments about salesmans"""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="salesman_review"
+    )
+    context = models.TextField(max_length=2000)
+    salesman = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        validators=[validate_salesman],
+        related_name="review",
+    )
+    created = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class META:
+        ordering = ["-create"]
+
+
+class LotReview(models.Model):
+    """Comments about lots"""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="lot_review"
+    )
+    context = models.TextField(max_length=2000)
+    lot = models.ForeignKey(
+        Lot,
+        on_delete=models.CASCADE,
+        related_name="review",
+    )
+    created = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class META:
+        ordering = ["-create"]
 

@@ -1,0 +1,28 @@
+{% extends "base_general_template.html" %}
+
+
+{% block content %}
+    <h1>List of orders</h1>
+
+    {% if list_orders %}
+            <ul class="list-group">
+
+              {% for order in list_orders %}
+              <li class="list-group-item">
+                  <p><b> {{ order.order }}</b></p>
+                  <p><b>Cost:</b> {{ order.get_coast }}</p>
+                  <p><b>Lot:</b> {{ order.lot }}</p>
+                  <p><b>Flower:</b> {{ order.lot.flower }}</p>
+                  <p><b>Amount:</b> {{ order.amount }}</p>
+                  <p class="w-25 p-3">
+                      <a href=" {{ order.lot.get_absolute_url }} "
+                         class="list-group-item list-group-item-action active">Lot</a>
+                  </p>
+
+              </li>
+              {% endfor %}
+
+            </ul>
+        {% endif %}
+
+{% endblock %}

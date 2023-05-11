@@ -1,0 +1,37 @@
+{% extends "base_general_template.html" %}
+
+{% block content %}
+  <h1>{{ lot }}</h1>
+  {% if user.role == 1 %}
+    <p>
+      <a href="{{ lot.get_update_url }}">Update</a> |
+<!--      <a href="">Delete</a>-->
+    </p>
+  {% endif %}
+
+  <p><strong>Lot:</strong> {{ lot.title }}</p>
+  <p><strong>Flower:</strong> {{ lot.flower }}</p>
+  <p><strong>Flower shade:</strong> {{ lot.flower.get_shade_display }}</p>
+  <p><strong>Date created:</strong> {{ lot.created|date:"d.m.Y, H:i" }}</p>
+  <p><strong>Unit_price:</strong> {{ lot.unit_price }}</p>
+  <p><strong>Hide:</strong> {{ lot.hide }}</p>
+  <p><strong>Salesman:</strong><a href="{{ lot.salesman.get_salesman_url }}">{{ lot.salesman }}</a></p>
+
+
+    <div style="margin-left:20px;margin-top:20px">
+      <h3>Comments</h3>
+
+      {% for comment in lot.review.all %}
+      <hr>
+      <p>
+        {{ comment.user }} ({{ comment.created }}) - {{ comment.context }}
+      </p>
+      {% endfor %}
+      {% if user.is_authenticated %}
+      <h4><a href="{{ lot.get_comment_url }}">Add comment</a></h4>
+      {% endif %}
+
+    </div>
+
+
+{% endblock %}
